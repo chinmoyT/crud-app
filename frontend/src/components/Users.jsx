@@ -12,6 +12,7 @@ const Users = () => {
     const getUsers = async () => {
         try {
             const response = await axios.get(`${url}/users`)
+            //alert("Data added successfully to Database")
             setUser(response.data)
         }
         catch (err) {
@@ -35,6 +36,7 @@ const Users = () => {
             setData({ name: '', age: '', dob: '', address: '' })
             setShowAddUser(false)
             await getUsers()
+            alert("Data added successfully to Database")
         }
         catch (err) {
             console.log('Error adding user', err)
@@ -62,10 +64,10 @@ const Users = () => {
         e.preventDefault()
         try {
             await axios.put(`${url}/users/${updateUser._id}`, data)
-            setUser(user.map(u => (u.id === updateUser.id ? { ...u, ...data } : u)))
             setUpdateUser(null)
             setData({ name: '', age: '', dob: '', address: '' })
             setShowAddUser(false)
+            await getUsers()
         }
         catch (err) {
             console.log(err)
@@ -82,6 +84,7 @@ const Users = () => {
         try {
             await axios.delete(`${url}/users/${id}`)
             setUser(user.filter((u) => u._id != id))
+            alert("User deleted.")
         }
         catch (err) {
             console.log('Error deleting user', err)
@@ -90,13 +93,15 @@ const Users = () => {
 
     return (
         <div className='container-fluid'>
-            <table className='table table-borderless table-hover'>
+            {user.length ? <table className='table table-borderless table-hover'>
                 <thead className='table-dark'>
                     <tr>
                         <th scope="col">Name</th>
                         <th scope="col">DOB</th>
                         <th scope="col">Age</th>
                         <th scope="col">Address</th>
+                        <th scope="col">Edit</th>
+                        <th scope="col">Delete</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -109,36 +114,101 @@ const Users = () => {
                             <td>
                                 <button onClick={() => handleEditUser(u)}>Edit</button>
                             </td>
-                            <td><img src={Delete} style={{cursor:'pointer',width: '40px', height: "40px"}} onClick={()=> deleteUser(u._id)}/></td>
+                            <td><img src={Delete} style={{ cursor: 'pointer', width: '40px', height: "40px" }} onClick={() => deleteUser(u._id)} /></td>
                         </tr>
                     ))}
                 </tbody>
-            </table>
+            </table> : <h2>No user found!!</h2>}
             <div>
-                <button type="button" className="btn btn-secondary" onClick={handleAddUserForm}>Add</button>
+                <button type="button" className="btn btn-secondary" onClick={handleAddUserForm} hidden={showAddUser}>{showAddUser?"":"Add"}</button>
             </div>
             {showAddUser && (
-                <div>
-                    <form onSubmit={updateUser ? EditUser : addUser }>  
-                        <h3 className='mt-3'>{updateUser? 'Edit User' : 'Add User'}</h3>
-                        <div className='form-floating mb-3 mt-3'>
-                            <input type="text" className='form-control' name='name' id='Name' placeholder='Name' value={data.name} onChange={handleFormChange} />
+                <div
+                    style={{
+                        width: "100%",
+                        display: "flex",
+                        justifyContent: "center",
+                        alignItems: "center",
+                        paddingTop: "2vh"
+                    }}
+                >
+                    <form
+                        onSubmit={updateUser ? EditUser : addUser}
+                        style={{
+                            width: "40%",
+                            backgroundColor: "#fff",
+                            padding: "2rem", 
+                            borderRadius: "8px", 
+                            boxShadow: "0px 4px 6px rgba(0, 0, 0, 0.1)", 
+                        }}
+                    >
+                        <h3 className="mt-3 text-center">
+                            {updateUser ? "Edit User" : "Add User"}
+                        </h3>
+                        <div className="form-floating mb-3 mt-3">
+                            <input
+                                type="text"
+                                className="form-control"
+                                name="name"
+                                id="Name"
+                                placeholder="Name"
+                                value={data.name}
+                                onChange={handleFormChange}
+                                required={"true"}
+                            />
                             <label htmlFor="Name">Name</label>
                         </div>
-                        <div className='form-floating mb-3'>
-                            <input type="date" id="DOB" className='form-control' name='dob' placeholder='Date of Birth' value={data.dob} onChange={handleFormChange} />
+                        <div className="form-floating mb-3">
+                            <input
+                                type="date"
+                                id="DOB"
+                                className="form-control"
+                                name="dob"
+                                placeholder="Date of Birth"
+                                value={data.dob}
+                                onChange={handleFormChange}
+                                required={"true"}
+                            />
                             <label htmlFor="DOB">Date of Birth</label>
                         </div>
-                        <div className='form-floating mb-3'>
-                            <input type="number" id="Age" placeholder='Age' name='age' className='form-control' value={data.age} onChange={handleFormChange} />
+                        <div className="form-floating mb-3">
+                            <input
+                                type="number"
+                                id="Age"
+                                placeholder="Age"
+                                name="age"
+                                className="form-control"
+                                value={data.age}
+                                onChange={handleFormChange}
+                                required={"true"}
+                            />
                             <label htmlFor="Age">Age</label>
                         </div>
-                        <div className='form-floating mb-3'>
-                            <input type="text" id="Address" placeholder='Address' name='address' className='form-control' value={data.address} onChange={handleFormChange} />
+                        <div className="form-floating mb-3">
+                            <input
+                                type="text"
+                                id="Address"
+                                placeholder="Address"
+                                name="address"
+                                className="form-control"
+                                value={data.address}
+                                onChange={handleFormChange}
+                                required={"true"}
+                            />
                             <label htmlFor="Address">Address</label>
                         </div>
-                        <button className='btn btn-dark' type='submit' style={{marginRight:"5px"}}>Submit</button>
-                        <button className='btn btn-dark' type='button' onClick={handleCancel} >Cancel</button>
+                        <div className="text-center">
+                            <button
+                                className="btn btn-dark"
+                                type="submit"
+                                style={{ marginRight: "5px" }}
+                            >
+                                Submit
+                            </button>
+                            <button className="btn btn-dark" type="button" onClick={handleCancel}>
+                                Cancel
+                            </button>
+                        </div>
                     </form>
                 </div>
             )}

@@ -25,39 +25,44 @@ app.get('/users', async (req, res) => {
     }
 })
 
-app.post('/users', async (req, res)=> {
-    try{
-        const {name, age, dob, address} = req.body
-        const user = new User({name, age, dob, address})
+app.post('/users', async (req, res) => {
+    try {
+        const { name, age, dob, address } = req.body
+        const user = new User({ name, age, dob, address })
         const newUser = await user.save()
         res.status(200).json(newUser)
     }
-    catch(err){
+    catch (err) {
         res.status(500).send(err)
     }
 })
 
-app.put('/users/:id', async (req, res)=> {
-    try{
-        const {id} = req.params
-        const {name, dob, age, address} = req.body
-        const user = await User.findByIdAndUpdate(id, {name, dob, age, address})
+app.put('/users/:id', async (req, res) => {
+    try {
+        const { id } = req.params
+        const { name, dob, age, address } = req.body
+        const user = await User.findById(id)
+        if (name) user.name = name;
+        if (dob) user.dob = dob;
+        if (age) user.age = age;
+        if (address) user.address = address;
+        await user.save()
         res.status(200).json(user)
     }
-    catch(err){
+    catch (err) {
         res.status(500).send(err)
     }
 })
 
-app.delete('/users/:id', async(req, res)=> {
-    try{
-        const {id} = req.params
+app.delete('/users/:id', async (req, res) => {
+    try {
+        const { id } = req.params
         await User.findByIdAndDelete(id)
         res.status(200).send('Deleted successfully')
     }
-    catch(err){
+    catch (err) {
         res.status(500).send(err)
-    }    
+    }
 })
 
 const port = 5000
