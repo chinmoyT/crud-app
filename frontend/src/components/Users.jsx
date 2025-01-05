@@ -2,12 +2,18 @@ import React, { useEffect, useState } from 'react'
 import { url } from '../Url'
 import axios from 'axios'
 import Delete from '../assets/delete.png'
+import { signOut } from 'firebase/auth'
+import { auth } from '../firebase/firebase_config'
 
 const Users = () => {
     const [user, setUser] = useState([])
     const [data, setData] = useState({ name: '', age: '', dob: '', address: '' })
     const [showAddUser, setShowAddUser] = useState(false)
     const [updateUser, setUpdateUser] = useState(null)
+
+    const handleLogout = async () => {
+        await signOut(auth);
+      };
 
     const getUsers = async () => {
         try {
@@ -82,9 +88,9 @@ const Users = () => {
 
     const deleteUser = async (id) => {
         try {
-            await axios.delete(`${url}/users/${id}`)
+            const res = await axios.delete(`${url}/users/${id}`)
             setUser(user.filter((u) => u._id != id))
-            alert("User deleted.")
+            alert(res.data)
         }
         catch (err) {
             console.log('Error deleting user', err)
@@ -93,7 +99,10 @@ const Users = () => {
 
     return (
         <div className='container-fluid'>
-            {user.length ? <table className='table table-borderless table-hover'>
+            <div className='d-flex flex-row-reverse p-3'>
+            <button onClick={handleLogout} className='m-2'>Sign out</button>
+            </div>
+            {user.length ? <table className='table table-borderless table-hover min-vw-50'>
                 <thead className='table-dark'>
                     <tr>
                         <th scope="col">Name</th>
@@ -129,7 +138,7 @@ const Users = () => {
                         display: "flex",
                         justifyContent: "center",
                         alignItems: "center",
-                        paddingTop: "2vh"
+                        paddingTop: "2px"
                     }}
                 >
                     <form
