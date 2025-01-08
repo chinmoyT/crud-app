@@ -20,9 +20,10 @@ function App() {
     
     <Router>
       <Routes>
-        <Route path='/' element={!user ? <LoginPage /> : <Navigate to="/user" replace />} />
-        <Route path="/user"element={user ? <Users /> : <Navigate to="/" replace />}
-        />
+        {/* <Route path='/' element={!user ? <LoginPage /> : <Navigate to="/user" replace />} />
+        <Route path="/user"element={user ? <Users /> : <Navigate to="/" replace />} /> */}
+        <Route path='/' element={<Users />} />
+        <Route path='/login' element={<LoginPage />} />
       </Routes>
     </Router>
     

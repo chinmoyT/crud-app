@@ -1,137 +1,100 @@
-import React, { useEffect, useState } from 'react'
-import { url } from '../Url'
-import axios from 'axios'
+import React, { useState } from 'react'
 import Delete from '../assets/delete.png'
 import { signOut } from 'firebase/auth'
 import { auth } from '../firebase/firebase_config'
+import { useDispatch, useSelector } from 'react-redux'
+import { adduser, edituser, deleteuser } from '../features/data/DataSlice'
 
 const Users = () => {
-    const [user, setUser] = useState([])
     const [data, setData] = useState({ name: '', age: '', dob: '', address: '' })
-    const [showAddUser, setShowAddUser] = useState(false)
+    const [modal, setModal] = useState(false)
     const [updateUser, setUpdateUser] = useState(null)
+    const dispatch = useDispatch()
+    const users = useSelector(state => state.users.users)
 
     const handleLogout = async () => {
         await signOut(auth);
-      };
-
-    const getUsers = async () => {
-        try {
-            const response = await axios.get(`${url}/users`)
-            //alert("Data added successfully to Database")
-            setUser(response.data)
-        }
-        catch (err) {
-            console.log('Fetching erropr', err)
-        }
-
-    }
-    useEffect(() => {
-        getUsers()
-    }, [])
+    };
 
     const handleAddUserForm = () => {
-        setShowAddUser(!showAddUser)
+        setModal(!modal)
     }
 
     const addUser = async (e) => {
         e.preventDefault()
-        try {
-            const response = await axios.post(`${url}/users`, data)
-            setUser([...user, response.data])
-            setData({ name: '', age: '', dob: '', address: '' })
-            setShowAddUser(false)
-            await getUsers()
-            alert("Data added successfully to Database")
-        }
-        catch (err) {
-            console.log('Error adding user', err)
-        }
+        const newUser = { ...data, id: Date.now().toString() }
+        dispatch(adduser(newUser))
+        setData({ name: '', age: '', dob: '', address: '' })
+        setModal(false)
     }
 
     const handleFormChange = (e) => {
         const { name, value } = e.target
         setData({ ...data, [name]: value })
-        
+
     }
 
-    const handleEditUser = (user) => {
-        setUpdateUser(user)
-        setData({
-            name: user.name,
-            age: user.age,
-            dob: user.dob,
-            address: user.address
-        })
-        setShowAddUser(!showAddUser)
+    const handleEditUser = (u) => {
+        setUpdateUser(u)
+        setData(u)
+        setModal(!modal)
     }
 
     const EditUser = async (e) => {
         e.preventDefault()
-        try {
-            await axios.put(`${url}/users/${updateUser._id}`, data)
-            setUpdateUser(null)
-            setData({ name: '', age: '', dob: '', address: '' })
-            setShowAddUser(false)
-            await getUsers()
-        }
-        catch (err) {
-            console.log(err)
-        }
-    }
-
-    const handleCancel = ()=> {
+        dispatch(dispatch(edituser({...data, id: updateUser.id})))
         setUpdateUser(null)
-        setData({name: '',age: '', dob: '', address: ''})
-        setShowAddUser(false)
+        setData({ name: '', age: '', dob: '', address: '' })
+        setModal(false)
     }
 
-    const deleteUser = async (id) => {
-        try {
-            const res = await axios.delete(`${url}/users/${id}`)
-            setUser(user.filter((u) => u._id != id))
-            alert(res.data)
-        }
-        catch (err) {
-            console.log('Error deleting user', err)
-        }
+    const handleCancel = () => {
+        setUpdateUser(null)
+        setData({ name: '', age: '', dob: '', address: '' })
+        setModal(false)
+    }
+
+    const handledeleteUser = (id) => {
+        dispatch(deleteuser(id))
     }
 
     return (
         <div className='container-fluid'>
             <div className='d-flex flex-row-reverse p-3'>
-            <button onClick={handleLogout} className='m-2'>Sign out</button>
+                <button onClick={handleLogout} className='m-2'>Sign out</button>
             </div>
-            {user.length ? <table className='table table-borderless table-hover min-vw-50'>
-                <thead className='table-dark'>
-                    <tr>
-                        <th scope="col">Name</th>
-                        <th scope="col">DOB</th>
-                        <th scope="col">Age</th>
-                        <th scope="col">Address</th>
-                        <th scope="col">Edit</th>
-                        <th scope="col">Delete</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {user.map((u) => (
-                        <tr key={u._id}>
-                            <td>{u.name}</td>
-                            <td>{u.dob}</td>
-                            <td>{u.age}</td>
-                            <td>{u.address}</td>
-                            <td>
-                                <button onClick={() => handleEditUser(u)}>Edit</button>
-                            </td>
-                            <td><img src={Delete} style={{ cursor: 'pointer', width: '40px', height: "40px" }} onClick={() => deleteUser(u._id)} /></td>
+            <div className='table-responsive'>
+                {users.length ? <table className='table table-borderless table-hover min-vw-50'>
+                    <thead className='table-dark'>
+                        <tr>
+                            <th scope="col">Name</th>
+                            <th scope="col">DOB</th>
+                            <th scope="col">Age</th>
+                            <th scope="col">Address</th>
+                            <th scope="col">Edit</th>
+                            <th scope="col">Delete</th>
                         </tr>
-                    ))}
-                </tbody>
-            </table> : <h2>No user found!!</h2>}
-            <div>
-                <button type="button" className="btn btn-secondary" onClick={handleAddUserForm} hidden={showAddUser}>{showAddUser?"":"Add"}</button>
+                    </thead>
+                    <tbody>
+                        {users.map((u) => (
+                            <tr key={u._id}>
+                                <td>{u.name}</td>
+                                <td>{u.dob}</td>
+                                <td>{u.age}</td>
+                                <td>{u.address}</td>
+                                <td>
+                                    <button onClick={() => handleEditUser(u)}>Edit</button>
+                                </td>
+                                <td><img src={Delete} style={{ cursor: 'pointer', width: '40px', height: "40px" }} onClick={() => handledeleteUser(u._id)} /></td>
+                            </tr>
+                        ))}
+                    </tbody>
+                </table> : <h2>No user found!!</h2>}
             </div>
-            {showAddUser && (
+            <div>
+                <button type="button" className="btn btn-secondary" onClick={handleAddUserForm} hidden={modal}>{modal ? "" : "Add"}</button>
+            </div>
+            {modal && (
                 <div
                     style={{
                         width: "100%",
@@ -144,11 +107,11 @@ const Users = () => {
                     <form
                         onSubmit={updateUser ? EditUser : addUser}
                         style={{
-                            width: "40%",
+                            width: "100%",
                             backgroundColor: "#fff",
-                            padding: "2rem", 
-                            borderRadius: "8px", 
-                            boxShadow: "0px 4px 6px rgba(0, 0, 0, 0.1)", 
+                            padding: "2rem",
+                            borderRadius: "8px",
+                            maxWidth: '600px'
                         }}
                     >
                         <h3 className="mt-3 text-center">
