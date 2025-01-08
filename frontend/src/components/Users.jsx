@@ -77,7 +77,7 @@ const Users = () => {
                     </thead>
                     <tbody>
                         {users.map((u) => (
-                            <tr key={u._id}>
+                            <tr key={u.id}>
                                 <td>{u.name}</td>
                                 <td>{u.dob}</td>
                                 <td>{u.age}</td>
@@ -85,7 +85,7 @@ const Users = () => {
                                 <td>
                                     <button onClick={() => handleEditUser(u)}>Edit</button>
                                 </td>
-                                <td><img src={Delete} style={{ cursor: 'pointer', width: '40px', height: "40px" }} onClick={() => handledeleteUser(u._id)} /></td>
+                                <td><img src={Delete} style={{ cursor: 'pointer', width: '40px', height: "40px" }} onClick={() => handledeleteUser(u.id)} /></td>
                             </tr>
                         ))}
                     </tbody>
