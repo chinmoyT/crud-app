@@ -20,9 +20,6 @@ export const DataSlice = createSlice({
         deleteuser: (state, action)=> {
             const requiredUsers = state.users.filter(user => user.id !== action.payload)
             state.users = requiredUsers
-        },
-        setUsers: (state, action)=> {
-            state.users = action.payload
         }
     }
 })
