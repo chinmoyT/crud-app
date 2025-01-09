@@ -42,7 +42,7 @@ const Users = () => {
 
     const EditUser = async (e) => {
         e.preventDefault()
-        dispatch(dispatch(edituser({...data, id: updateUser.id})))
+        dispatch(dispatch(edituser({ ...data, id: updateUser.id })))
         setUpdateUser(null)
         setData({ name: '', age: '', dob: '', address: '' })
         setModal(false)
@@ -96,92 +96,88 @@ const Users = () => {
             </div>
             {modal && (
                 <div
-                    style={{
-                        width: "100%",
-                        display: "flex",
-                        justifyContent: "center",
-                        alignItems: "center",
-                        paddingTop: "2px"
-                    }}
+                    className="modal show"
+                    style={{ display: "block" }}
+                    tabIndex="-1"
+                    role="dialog"
                 >
-                    <form
-                        onSubmit={updateUser ? EditUser : addUser}
-                        style={{
-                            width: "100%",
-                            backgroundColor: "#fff",
-                            padding: "2rem",
-                            borderRadius: "8px",
-                            maxWidth: '600px'
-                        }}
-                    >
-                        <h3 className="mt-3 text-center">
-                            {updateUser ? "Edit User" : "Add User"}
-                        </h3>
-                        <div className="form-floating mb-3 mt-3">
-                            <input
-                                type="text"
-                                className="form-control"
-                                name="name"
-                                id="Name"
-                                placeholder="Name"
-                                value={data.name}
-                                onChange={handleFormChange}
-                                required={"true"}
-                            />
-                            <label htmlFor="Name">Name</label>
+                    <div className="modal-dialog" role="document">
+                        <div className="modal-content">
+                            <div className="modal-header">
+                                <h5 className="modal-title">
+                                    {updateUser ? "Edit User" : "Add User"}
+                                </h5>
+                            </div>
+                            <form onSubmit={updateUser ? EditUser : addUser}>
+                                <div className="modal-body">
+                                    <div className="form-floating mb-3">
+                                        <input
+                                            type="text"
+                                            className="form-control"
+                                            name="name"
+                                            id="Name"
+                                            placeholder="Name"
+                                            value={data.name}
+                                            onChange={handleFormChange}
+                                            required
+                                        />
+                                        <label htmlFor="Name">Name</label>
+                                    </div>
+                                    <div className="form-floating mb-3">
+                                        <input
+                                            type="date"
+                                            id="DOB"
+                                            className="form-control"
+                                            name="dob"
+                                            placeholder="Date of Birth"
+                                            value={data.dob}
+                                            onChange={handleFormChange}
+                                            required
+                                        />
+                                        <label htmlFor="DOB">Date of Birth</label>
+                                    </div>
+                                    <div className="form-floating mb-3">
+                                        <input
+                                            type="number"
+                                            id="Age"
+                                            placeholder="Age"
+                                            name="age"
+                                            className="form-control"
+                                            value={data.age}
+                                            onChange={handleFormChange}
+                                            required
+                                        />
+                                        <label htmlFor="Age">Age</label>
+                                    </div>
+                                    <div className="form-floating mb-3">
+                                        <input
+                                            type="text"
+                                            id="Address"
+                                            placeholder="Address"
+                                            name="address"
+                                            className="form-control"
+                                            value={data.address}
+                                            onChange={handleFormChange}
+                                            required
+                                        />
+                                        <label htmlFor="Address">Address</label>
+                                    </div>
+                                </div>
+                                <div className="modal-footer">
+                                    <button className="btn btn-dark" type="submit">
+                                        Submit
+                                    </button>
+                                    <button
+                                        className="btn btn-secondary"
+                                        type="button"
+                                        onClick={handleCancel}
+                                    >
+                                        Cancel
+                                    </button>
+                                </div>
+                            </form>
                         </div>
-                        <div className="form-floating mb-3">
-                            <input
-                                type="date"
-                                id="DOB"
-                                className="form-control"
-                                name="dob"
-                                placeholder="Date of Birth"
-                                value={data.dob}
-                                onChange={handleFormChange}
-                                required={"true"}
-                            />
-                            <label htmlFor="DOB">Date of Birth</label>
-                        </div>
-                        <div className="form-floating mb-3">
-                            <input
-                                type="number"
-                                id="Age"
-                                placeholder="Age"
-                                name="age"
-                                className="form-control"
-                                value={data.age}
-                                onChange={handleFormChange}
-                                required={"true"}
-                            />
-                            <label htmlFor="Age">Age</label>
-                        </div>
-                        <div className="form-floating mb-3">
-                            <input
-                                type="text"
-                                id="Address"
-                                placeholder="Address"
-                                name="address"
-                                className="form-control"
-                                value={data.address}
-                                onChange={handleFormChange}
-                                required={"true"}
-                            />
-                            <label htmlFor="Address">Address</label>
-                        </div>
-                        <div className="text-center">
-                            <button
-                                className="btn btn-dark"
-                                type="submit"
-                                style={{ marginRight: "5px" }}
-                            >
-                                Submit
-                            </button>
-                            <button className="btn btn-dark" type="button" onClick={handleCancel}>
-                                Cancel
-                            </button>
-                        </div>
-                    </form>
+                    </div>
                 </div>
             )}
 
